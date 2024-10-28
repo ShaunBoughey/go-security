@@ -1,0 +1,143 @@
+components:
+  schemas:
+    SSLConfig:
+      properties:
+        cipherSuite:
+          items:
+            type: string
+          type: array
+        expiry:
+          format: date-time
+          type: string
+        issuer:
+          type: string
+        subject:
+          type: string
+        supportedProtocols:
+          items:
+            type: string
+          type: array
+      type: object
+    SecurityHeaders:
+      properties:
+        contentSecurityPolicy:
+          type: string
+        strictTransportPolicy:
+          type: string
+        xContentTypeOptions:
+          type: string
+        xFrameOptions:
+          type: string
+        xXSSProtection:
+          type: string
+      type: object
+info:
+  description: An API to check website security.
+  title: Go Security API
+  version: 0.1.0
+openapi: 3.0.0
+paths:
+  /security:
+    get:
+      description: ' Get HTTP Security Headers for multiple URLs.'
+      parameters:
+      - description: Target URLs to check security headers (comma-separated)
+        in: query
+        name: urls
+        required: true
+        schema:
+          description: Target URLs to check security headers (comma-separated)
+          format: string
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  key:
+                    properties:
+                      contentSecurityPolicy:
+                        type: string
+                      strictTransportPolicy:
+                        type: string
+                      xContentTypeOptions:
+                        type: string
+                      xFrameOptions:
+                        type: string
+                      xXSSProtection:
+                        type: string
+                    type: object
+                type: object
+          description: Map of URLs to their security headers
+        "400":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: URLs parameter is required
+        "500":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: Unable to fetch one or more URLs
+      summary: Get HTTP Security Headers
+      tags:
+      - security
+  /ssl:
+    get:
+      description: ' Get SSL/TLS configuration details for a given URL.'
+      parameters:
+      - description: Target URLs to check SSL/TLS configuration (comma-separated)
+        in: query
+        name: urls
+        required: true
+        schema:
+          description: Target URLs to check SSL/TLS configuration (comma-separated)
+          format: string
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  key:
+                    properties:
+                      cipherSuite:
+                        items:
+                          type: string
+                        type: array
+                      expiry:
+                        format: date-time
+                        type: string
+                      issuer:
+                        type: string
+                      subject:
+                        type: string
+                      supportedProtocols:
+                        items:
+                          type: string
+                        type: array
+                    type: object
+                type: object
+          description: SSL/TLS configuration details
+        "400":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: URL parameter is required
+        "500":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: Unable to fetch SSL/TLS details
+      summary: Get SSL/TLS Configuration
+      tags:
+      - security
+servers:
+- description: Default Server URL
+  url: /
